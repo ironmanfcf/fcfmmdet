@@ -9,7 +9,7 @@ from .frame_sampling import BaseFrameSample, UniformRefFrameSample
 from .geometric import (GeomTransform, Rotate, ShearX, ShearY, TranslateX,
                         TranslateY)
 from .instaboost import InstaBoost
-from .loading import (FilterAnnotations, InferencerLoader, LoadAnnotations,
+from .loading import (LoadDualADAnnotations,LoadDualAnnotations,FilterAnnotations, InferencerLoader, LoadAnnotations,
                       LoadEmptyAnnotations, LoadImageFromNDArray,
                       LoadMultiChannelImageFromFiles, LoadPanopticAnnotations,
                       LoadProposals, LoadTrackAnnotations)
@@ -24,7 +24,7 @@ from .transforms import (Albu, CachedMixUp, CachedMosaic, CopyPaste, CutOut,
                          SegRescale, YOLOXHSVRandomAug)
 from .wrappers import MultiBranch, ProposalBroadcaster, RandomOrder
 
-__all__ = [
+__all__ = ['LoadDualAnnotations','LoadDualADAnnotations',
     'PackDetInputs', 'ToTensor', 'ImageToTensor', 'Transpose',
     'LoadImageFromNDArray', 'LoadAnnotations', 'LoadPanopticAnnotations',
     'LoadMultiChannelImageFromFiles', 'LoadProposals', 'Resize', 'RandomFlip',
