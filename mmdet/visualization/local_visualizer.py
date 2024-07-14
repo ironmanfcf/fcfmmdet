@@ -156,17 +156,17 @@ class DetLocalVisualizer(Visualizer):
                     score = round(float(instances.scores[i]) * 100, 1)
                     label_text += f': {score}'
 
-                self.draw_texts(
-                    label_text,
-                    pos,
-                    colors=text_colors[i],
-                    font_sizes=int(13 * scales[i]),
-                    bboxes=[{
-                        'facecolor': 'black',
-                        'alpha': 0.8,
-                        'pad': 0.7,
-                        'edgecolor': 'none'
-                    }])
+                # self.draw_texts(
+                #     label_text,
+                #     pos,
+                #     colors=text_colors[i],
+                #     font_sizes=int(13 * scales[i]),
+                #     bboxes=[{
+                #         'facecolor': 'black',
+                #         'alpha': 0.8,
+                #         'pad': 0.7,
+                #         'edgecolor': 'none'
+                #     }])
 
         if 'masks' in instances:
             labels = instances.labels
