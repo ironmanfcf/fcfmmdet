@@ -61,6 +61,174 @@ def cross_entropy(pred,
 
     return loss
 
+def lsr (pred,
+        label,
+        weight=None,
+        reduction='mean',
+        avg_factor=None,
+        class_weight=None,
+        ignore_index=-100,
+        avg_non_ignore=False,
+        epsilon=0.1):
+    """Calculate the CL loss with Label Smoothing.
+    
+
+    Args:
+        pred (torch.Tensor): The prediction with shape (N, )
+        label (torch.Tensor): The learning label of the prediction, with shape (N, )
+        weight (torch.Tensor, optional): Sample-wise loss weight.
+        reduction (str, optional): The method used to reduce the loss.
+            Options are "none", "mean" and "sum".
+        avg_factor (int, optional): Average factor that is used to average
+            the loss. Defaults to None.
+        ignore_index (int | None): The label index to be ignored.
+            If None, it will be set to default value. Default: -100.
+        avg_non_ignore (bool): The flag decides to whether the loss is
+            only averaged over non-ignored targets. Default: False.
+        epsilon (float, optional): The smoothing factor. Default: 0.1.
+
+    Returns:
+        torch.Tensor: The calculated loss.
+    """
+    # The default value of ignore_index is the same as in `F.cross_entropy`
+    ignore_index = -100 if ignore_index is None else ignore_index
+
+    # Mask out ignored elements
+    valid_mask = ((label >= 0) & (label != ignore_index)).float()
+    
+    if weight is not None:
+        weight = weight * valid_mask
+    else:
+        weight = valid_mask
+
+   
+    # Apply label smoothing directly here
+    smoothed_label = (1 - epsilon) * label + epsilon * pred
+
+    # Average loss over non-ignored elements
+    if (avg_factor is None) and avg_non_ignore and reduction == 'mean':
+        avg_factor = valid_mask.sum().item()
+
+    # Mean Squared Error loss with label smoothing
+    weight = weight.float()
+    loss = F.binary_cross_entropy_with_logits(pred, smoothed_label, reduction='none')
+    # Do the reduction for the weighted loss
+    loss = weight_reduce_loss(loss, weight, reduction=reduction, avg_factor=avg_factor)
+
+    return loss
+
+def symmetric_cross_entropy(pred, label, weight=None, reduction='mean', avg_factor=None,
+        class_weight=None, ignore_index=-100, avg_non_ignore=False, alpha=0.2, beta=0.8):
+    """
+    Calculate the symmetric cross-entropy loss with label smoothing.
+    
+    Args:
+        pred (torch.Tensor): The prediction with shape (N,).
+        label (torch.Tensor): The learning label of the prediction with shape (N,).
+        weight (torch.Tensor, optional): Sample-wise loss weight.
+        reduction (str, optional): The method used to reduce the loss. Options are "none", "mean" and "sum".
+        avg_factor (int, optional): Average factor that is used to average the loss. Defaults to None.
+        class_weight (list[float], optional): The weight for each class.
+        ignore_index (int | None): The label index to be ignored. Default: -100.
+        avg_non_ignore (bool): The flag decides whether the loss is only averaged over non-ignored targets. Default: False.
+        epsilon (float, optional): The smoothing factor. Default: 0.1.
+        alpha (float): Weight for the standard cross-entropy.
+        beta (float): Weight for the reverse cross-entropy.
+        
+    Returns:
+        torch.Tensor: The calculated loss.
+    """
+    # The default value of ignore_index is the same as in `F.cross_entropy`
+    ignore_index = -100 if ignore_index is None else ignore_index
+
+    # Mask out ignored elements
+    valid_mask = ((label >= 0) & (label != ignore_index)).float()
+    
+    if weight is not None:
+        weight = weight * valid_mask
+    else:
+        weight = valid_mask
+
+    # Apply label smoothing to the label
+    # smoothed_label = (1 - epsilon) * label + epsilon * pred
+
+    # Clip predicted values to avoid log(0) issue
+    # pred_clipped = torch.clamp(pred, min=1e-7, max=1.0)
+    # label_clipped = torch.clamp(label, min=1e-4, max=1.0)
+
+    # Calculate the standard cross-entropy loss
+    loss_1 = F.binary_cross_entropy_with_logits(label, pred, reduction='none')
+
+    # Calculate the reverse cross-entropy loss
+    loss_2 = F.binary_cross_entropy_with_logits(pred, label, reduction='none')
+
+    loss_1_mean = weight_reduce_loss(
+        loss_1, weight=weight, reduction=reduction, avg_factor=avg_factor)
+    loss_2_mean = weight_reduce_loss(
+        loss_2, weight=weight, reduction=reduction, avg_factor=avg_factor)
+
+    # Combine the two losses
+    combined_loss = alpha * loss_1_mean + beta * loss_2_mean
+
+    return combined_loss
+
+def smooth_symmetric_cross_entropy(pred, label, weight=None, reduction='mean', avg_factor=None,
+        class_weight=None, ignore_index=-100, avg_non_ignore=False, epsilon=0.1,
+        alpha=0.2, beta=0.8):
+    """
+    Calculate the symmetric cross-entropy loss with label smoothing.
+    
+    Args:
+        pred (torch.Tensor): The prediction with shape (N,).
+        label (torch.Tensor): The learning label of the prediction with shape (N,).
+        weight (torch.Tensor, optional): Sample-wise loss weight.
+        reduction (str, optional): The method used to reduce the loss. Options are "none", "mean" and "sum".
+        avg_factor (int, optional): Average factor that is used to average the loss. Defaults to None.
+        class_weight (list[float], optional): The weight for each class.
+        ignore_index (int | None): The label index to be ignored. Default: -100.
+        avg_non_ignore (bool): The flag decides whether the loss is only averaged over non-ignored targets. Default: False.
+        epsilon (float, optional): The smoothing factor. Default: 0.1.
+        alpha (float): Weight for the standard cross-entropy.
+        beta (float): Weight for the reverse cross-entropy.
+        
+    Returns:
+        torch.Tensor: The calculated loss.
+    """
+    # The default value of ignore_index is the same as in `F.cross_entropy`
+    ignore_index = -100 if ignore_index is None else ignore_index
+
+    # Mask out ignored elements
+    valid_mask = ((label >= 0) & (label != ignore_index)).float()
+    
+    if weight is not None:
+        weight = weight * valid_mask
+    else:
+        weight = valid_mask
+
+    # Apply label smoothing to the label
+    label = (1 - epsilon) * label + epsilon * pred
+
+    # Clip predicted values to avoid log(0) issue
+    # pred_clipped = torch.clamp(pred, min=1e-7, max=1.0)
+    # label_clipped = torch.clamp(label, min=1e-4, max=1.0)
+
+    # Calculate the standard cross-entropy loss
+    loss_1 = F.binary_cross_entropy_with_logits(label, pred, reduction='none')
+
+    # Calculate the reverse cross-entropy loss
+    loss_2 = F.binary_cross_entropy_with_logits(pred, label, reduction='none')
+
+    loss_1_mean = weight_reduce_loss(
+        loss_1, weight=weight, reduction=reduction, avg_factor=avg_factor)
+    loss_2_mean = weight_reduce_loss(
+        loss_2, weight=weight, reduction=reduction, avg_factor=avg_factor)
+
+    # Combine the two losses
+    combined_loss = alpha * loss_1_mean + beta * loss_2_mean
+
+    return combined_loss
+
+
 
 def _expand_onehot_labels(labels, label_weights, label_channels, ignore_index):
     """Expand onehot labels to match the size of prediction."""
@@ -139,6 +307,14 @@ def binary_cross_entropy(pred,
     weight = weight.float()
     loss = F.binary_cross_entropy_with_logits(
         pred, label.float(), pos_weight=class_weight, reduction='none')
+    
+    # 打印最小值和最大值
+    # min_value = torch.min(loss)
+    # max_value = torch.max(loss)
+
+    # print("loss最小值:", min_value.item())
+    # print("loss最大值:", max_value.item())
+    
     # do the reduction for the weighted loss
     loss = weight_reduce_loss(
         loss, weight, reduction=reduction, avg_factor=avg_factor)
@@ -208,7 +384,11 @@ class CrossEntropyLoss(nn.Module):
                  class_weight=None,
                  ignore_index=None,
                  loss_weight=1.0,
-                 avg_non_ignore=False):
+                 avg_non_ignore=False,
+                 smooth=False,
+                 reverse=False,
+                 smooth_reverse=False
+                 ):
         """CrossEntropyLoss.
 
         Args:
@@ -225,6 +405,9 @@ class CrossEntropyLoss(nn.Module):
             loss_weight (float, optional): Weight of the loss. Defaults to 1.0.
             avg_non_ignore (bool): The flag decides to whether the loss is
                 only averaged over non-ignored targets. Default: False.
+            smooth(bool)
+            reverse(bool)
+            smooth_reverse
         """
         super(CrossEntropyLoss, self).__init__()
         assert (use_sigmoid is False) or (use_mask is False)
@@ -235,6 +418,9 @@ class CrossEntropyLoss(nn.Module):
         self.class_weight = class_weight
         self.ignore_index = ignore_index
         self.avg_non_ignore = avg_non_ignore
+        self.smooth = smooth
+        self.reverse = reverse
+        self.smooth_reverse = smooth_reverse
         if ((ignore_index is not None) and not self.avg_non_ignore
                 and self.reduction == 'mean'):
             warnings.warn(
@@ -247,8 +433,16 @@ class CrossEntropyLoss(nn.Module):
             self.cls_criterion = binary_cross_entropy
         elif self.use_mask:
             self.cls_criterion = mask_cross_entropy
+        elif self.smooth:
+            self.cls_criterion = lsr
+        elif self.reverse:
+            self.cls_criterion = symmetric_cross_entropy
+        elif self.smooth_reverse:
+            self.cls_criterion = smooth_symmetric_cross_entropy
         else:
             self.cls_criterion = cross_entropy
+
+        
 
     def extra_repr(self):
         """Extra repr."""

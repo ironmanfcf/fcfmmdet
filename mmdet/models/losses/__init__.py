@@ -4,7 +4,8 @@ from .ae_loss import AssociativeEmbeddingLoss
 from .balanced_l1_loss import BalancedL1Loss, balanced_l1_loss
 from .cross_entropy_loss import (CrossEntropyCustomLoss, CrossEntropyLoss,
                                  binary_cross_entropy, cross_entropy,
-                                 mask_cross_entropy)
+                                 mask_cross_entropy,
+                                 lsr, symmetric_cross_entropy, smooth_symmetric_cross_entropy)
 from .ddq_detr_aux_loss import DDQAuxLoss
 from .dice_loss import DiceLoss
 from .eqlv2_loss import EQLV2Loss
@@ -26,6 +27,7 @@ from .triplet_loss import TripletLoss
 from .utils import reduce_loss, weight_reduce_loss, weighted_loss
 from .varifocal_loss import VarifocalLoss
 
+
 __all__ = [
     'accuracy', 'Accuracy', 'cross_entropy', 'binary_cross_entropy',
     'mask_cross_entropy', 'CrossEntropyLoss', 'sigmoid_focal_loss',
@@ -38,5 +40,6 @@ __all__ = [
     'QualityFocalLoss', 'DistributionFocalLoss', 'VarifocalLoss',
     'KnowledgeDistillationKLDivLoss', 'SeesawLoss', 'DiceLoss', 'EQLV2Loss',
     'MarginL2Loss', 'MultiPosCrossEntropyLoss', 'L2Loss', 'TripletLoss',
-    'DDQAuxLoss', 'CrossEntropyCustomLoss', 'FocalCustomLoss'
+    'DDQAuxLoss', 'CrossEntropyCustomLoss', 'FocalCustomLoss' ,
+    'lsr', 'symmetric_cross_entropy', 'smooth_symmetric_cross_entropy'
 ]

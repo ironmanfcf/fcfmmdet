@@ -28,6 +28,22 @@ def smooth_l1_loss(pred: Tensor, target: Tensor, beta: float = 1.0) -> Tensor:
 
     assert pred.size() == target.size()
     diff = torch.abs(pred - target)
+    
+    # min_value = torch.min(diff)
+    # max_value = torch.max(diff)
+    # min_pred =torch.min(pred)
+    # max_pred =torch.max(pred)
+    # min_target =torch.min(target)
+    # max_target =torch.max(target)
+
+    # print("diff最小值:", min_value.item())
+    # print("diff最大值:", max_value.item())
+    # print("pred最小值:", min_pred.item())
+    # print("pred最大值:", max_pred.item())
+    # print("target最小值:", min_target.item())
+    # print("target最大值:", max_target.item())
+    
+    
     loss = torch.where(diff < beta, 0.5 * diff * diff / beta,
                        diff - 0.5 * beta)
     return loss
