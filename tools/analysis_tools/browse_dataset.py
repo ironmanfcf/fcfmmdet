@@ -73,7 +73,7 @@ def main():
             gt_instances.masks = masks.astype(bool)
         data_sample.gt_instances = gt_instances
 
-        visualizer.add_datasample(
+        visualizer.c(
             osp.basename(img_path),
             img,
             data_sample,
