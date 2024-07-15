@@ -56,6 +56,7 @@ from .retina_sepbn_head import RetinaSepBNHead
 
 from .fcos_seg_head import FCOSDepthHead
 from .fcos_DeCoDet_v16 import FCOSDeCoDetHeadV16
+from .fcos_DeCoDet_v3 import FCOSDeCoDetHeadV3
 
 
 __all__ = [
@@ -75,5 +76,5 @@ __all__ = [
     'BoxInstBboxHead', 'BoxInstMaskHead', 'ConditionalDETRHead', 'DINOHead',
     'ATSSVLFusionHead', 'DABDETRHead', 'DDQDETRHead', 'GroundingDINOHead',
     
-    'FCOSDepthHead','FCOSDeCoDetHeadV16'
+    'FCOSDepthHead','FCOSDeCoDetHeadV16','FCOSDeCoDetHeadV3'
 ]
