@@ -112,6 +112,7 @@ def lsr (pred,
     # Mean Squared Error loss with label smoothing
     weight = weight.float()
     loss = F.binary_cross_entropy_with_logits(pred, smoothed_label, reduction='none')
+    loss = torch.abs(loss)
     # Do the reduction for the weighted loss
     loss = weight_reduce_loss(loss, weight, reduction=reduction, avg_factor=avg_factor)
 
