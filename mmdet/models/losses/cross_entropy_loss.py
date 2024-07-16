@@ -112,7 +112,12 @@ def lsr (pred,
     # Mean Squared Error loss with label smoothing
     weight = weight.float()
     loss = F.binary_cross_entropy_with_logits(pred, smoothed_label, reduction='none')
+<<<<<<< HEAD
     loss = torch.abs(loss)
+=======
+    
+    loss = torch.abs(loss) 
+>>>>>>> 9e8584be1a9337891af08c4262302b529673bdaf
     # Do the reduction for the weighted loss
     loss = weight_reduce_loss(loss, weight, reduction=reduction, avg_factor=avg_factor)
 
@@ -299,6 +304,19 @@ def binary_cross_entropy(pred,
             weight = weight * valid_mask
         else:
             weight = valid_mask
+            
+        # min_value = torch.min(weight)
+        # max_value = torch.max(weight)
+
+        # print("weight最小值:", min_value.item())
+        # print("weight最大值:", max_value.item())
+        
+        # # Count the number of 0s and 1s in valid_mask
+        # num_zeros = torch.sum(valid_mask == 0).item()
+        # num_ones = torch.sum(valid_mask == 1).item()
+        
+        # print("Number of 0s in valid_mask:", num_zeros)
+        # print("Number of 1s in valid_mask:", num_ones)
 
     # average loss over non-ignored elements
     if (avg_factor is None) and avg_non_ignore and reduction == 'mean':
@@ -315,6 +333,16 @@ def binary_cross_entropy(pred,
 
     # print("loss最小值:", min_value.item())
     # print("loss最大值:", max_value.item())
+    
+    # 取绝对值
+    loss = torch.abs(loss)
+    
+    # # 打印最小值和最大值
+    # min_value = torch.min(loss)
+    # max_value = torch.max(loss)
+
+    # print("absloss最小值:", min_value.item())
+    # print("absloss最大值:", max_value.item())
     
     # do the reduction for the weighted loss
     loss = weight_reduce_loss(
