@@ -58,6 +58,7 @@ from .fcos_seg_head import FCOSDepthHead
 from .fcos_DeCoDet_v16 import FCOSDeCoDetHeadV16
 from .fcos_DeCoDet_v3 import FCOSDeCoDetHeadV3
 from .gfl_head_DeCoDetV16 import GFLDeCoDetV16Head
+from .fcos_DeCoDet_v18 import FCOSDeCoDetHeadV18
 
 
 __all__ = [
@@ -77,6 +78,6 @@ __all__ = [
     'BoxInstBboxHead', 'BoxInstMaskHead', 'ConditionalDETRHead', 'DINOHead',
     'ATSSVLFusionHead', 'DABDETRHead', 'DDQDETRHead', 'GroundingDINOHead',
     
-    'FCOSDepthHead','FCOSDeCoDetHeadV16','FCOSDeCoDetHeadV3',
+    'FCOSDepthHead','FCOSDeCoDetHeadV16','FCOSDeCoDetHeadV3','FCOSDeCoDetHeadV18',
     'GFLDeCoDetV16Head'
 ]
