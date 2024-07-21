@@ -96,6 +96,13 @@ def lsr (pred,
     # Mask out ignored elements
     valid_mask = ((label >= 0) & (label != ignore_index)).float()
     
+    # Count the number of 0s and 1s in valid_mask
+    # num_zeros = torch.sum(valid_mask == 0).item()
+    # num_ones = torch.sum(valid_mask == 1).item()
+        
+    # print("Number of 0s in valid_mask:", num_zeros)
+    # print("Number of 1s in valid_mask:", num_ones)
+    
     if weight is not None:
         weight = weight * valid_mask
     else:

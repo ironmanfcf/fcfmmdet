@@ -26,6 +26,7 @@ from .smooth_l1_loss import L1Loss, SmoothL1Loss, l1_loss, smooth_l1_loss
 from .triplet_loss import TripletLoss
 from .utils import reduce_loss, weight_reduce_loss, weighted_loss
 from .varifocal_loss import VarifocalLoss
+from .logsi_loss import SILOGLOSS
 
 
 __all__ = [
@@ -41,5 +42,6 @@ __all__ = [
     'KnowledgeDistillationKLDivLoss', 'SeesawLoss', 'DiceLoss', 'EQLV2Loss',
     'MarginL2Loss', 'MultiPosCrossEntropyLoss', 'L2Loss', 'TripletLoss',
     'DDQAuxLoss', 'CrossEntropyCustomLoss', 'FocalCustomLoss' ,
-    'lsr', 'symmetric_cross_entropy', 'smooth_symmetric_cross_entropy'
+    'lsr', 'symmetric_cross_entropy', 'smooth_symmetric_cross_entropy',
+    'SILOGLOSS'
 ]

@@ -15,10 +15,10 @@ from mmcv.cnn import Conv2d, ConvModule
 
 @MODELS.register_module()
 class FCOSDeCoDetHeadV16(FCOSDepthHead):
-    def __init__(self, num_layers=1, **kwargs) -> None:
+    def __init__(self, num_layers=1, mapping=False,
+                 **kwargs) -> None:
         super().__init__(**kwargs)
         self.feature_interaction_layers = num_layers
-        self.absolute = nn.Sigmoid()
         self.reduction_ratio = 4
         self.group_channels = 16
         self.groups = self.feat_channels // self.group_channels
@@ -33,6 +33,10 @@ class FCOSDeCoDetHeadV16(FCOSDepthHead):
         # 定义 involution 模块
         self.cross_involution_cls = cross_involution(channels=self.feat_channels, kernel_size=7, num_layers=num_layers, stride=1)
         self.cross_involution_reg = cross_involution(channels=self.feat_channels, kernel_size=7, num_layers=num_layers, stride=1)
+        
+        self.mapping=mapping
+        self.absolute = nn.Sigmoid()
+        self.mapping = nn.ReLU()
         
 
     def _init_layers(self) -> None:
@@ -89,7 +93,10 @@ class FCOSDeCoDetHeadV16(FCOSDepthHead):
         else:
             bbox_pred = bbox_pred.exp()
 
-        seg_score = self.absolute(seg_score)
+        if self.mapping:
+            seg_score = self.mapping(seg_score)
+        else: 
+            seg_score = self.absolute(seg_score)
 
         return cls_score, bbox_pred, centerness, seg_score
     

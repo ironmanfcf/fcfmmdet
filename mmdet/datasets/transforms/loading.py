@@ -603,50 +603,50 @@ class LoadDualADAnnotations(MMCV_LoadAnnotations):
         """
 #################   绝对深度输入  ####################################
         # 加载最大深度信息文件的路径
-        # max_depth_file = '/opt/data/private/fcf/mmdetection/data/HazyDet-365k/train/max_depth.txt'
-        # # 读取最大深度信息
-        # max_depth_map = {}
-        # with open(max_depth_file, 'r') as f:
-        #     # 跳过头行
-        #     lines = f.readlines()[1:]
-        #     for line in lines:
-        #         parts = line.strip().split()
-        #         if len(parts) == 2:
-        #             image_name, max_depth = parts
-        #             max_depth_map[image_name] = float(max_depth)
-        # # 加载深度图
-        # img_bytes = fileio.get(
-        #     results['seg_map_path'], backend_args=self.backend_args)
-        # # 使用OpenCV读取图像以处理PNG格式
-        # depth_map = mmcv.imfrombytes(img_bytes, flag='unchanged', backend='cv2').astype(np.float32)
-        # # 从路径中提取图像文件前缀名（不带扩展名）
-        # image_full_name = os.path.basename(results['seg_map_path'])
-        # image_name, _ = os.path.splitext(image_full_name)
-        # if image_name not in max_depth_map:
-        #     raise ValueError(f"Max depth not found for image: {image_name}")
-        # max_depth = max_depth_map[image_name]
+        max_depth_file = '/opt/data/private/fcf/mmdetection/data/HazyDet-365k/train/max_depth.txt'
+        # 读取最大深度信息
+        max_depth_map = {}
+        with open(max_depth_file, 'r') as f:
+            # 跳过头行
+            lines = f.readlines()[1:]
+            for line in lines:
+                parts = line.strip().split()
+                if len(parts) == 2:
+                    image_name, max_depth = parts
+                    max_depth_map[image_name] = float(max_depth)
+        # 加载深度图
+        img_bytes = fileio.get(
+            results['seg_map_path'], backend_args=self.backend_args)
+        # 使用OpenCV读取图像以处理PNG格式
+        depth_map = mmcv.imfrombytes(img_bytes, flag='unchanged', backend='cv2').astype(np.float32)
+        # 从路径中提取图像文件前缀名（不带扩展名）
+        image_full_name = os.path.basename(results['seg_map_path'])
+        image_name, _ = os.path.splitext(image_full_name)
+        if image_name not in max_depth_map:
+            raise ValueError(f"Max depth not found for image: {image_name}")
+        max_depth = max_depth_map[image_name]
 
-        # # 将相对深度转换为绝对深度
-        # absolute_depth_map = depth_map / 65535.0 * max_depth
-        # mean = np.mean(absolute_depth_map)
-        # std_dev = np.std(absolute_depth_map)
-        # normalized_depth_map = (absolute_depth_map - mean) / std_dev
+        # 将相对深度转换为绝对深度
+        absolute_depth_map = depth_map / 65535.0 * max_depth
+        mean = np.mean(absolute_depth_map)
+        std_dev = np.std(absolute_depth_map)
+        normalized_depth_map = (absolute_depth_map - mean) / std_dev
 
-        # # 转换为float16以节省内存
-        # normalized_depth_map = normalized_depth_map.astype(np.float16)
+        # 转换为float16以节省内存
+        normalized_depth_map = normalized_depth_map.astype(np.float32)
 
-        # results['gt_seg_map'] = normalized_depth_map
+        results['gt_seg_map'] = normalized_depth_map
 ################################################################
 
 ##################相对深度做zscore#############################
         # Load the depth map
-        img_bytes = fileio.get(
-            results['seg_map_path'], backend_args=self.backend_args)
-        # Read the image using OpenCV to handle PNG format
-        depth_map = mmcv.imfrombytes(img_bytes, flag='unchanged', backend='cv2').astype(np.float32)
-        mean = np.mean(depth_map)
-        std_dev = np.std(depth_map)
-        normalized_depth_map = (depth_map - mean) / std_dev               
+        # img_bytes = fileio.get(
+        #     results['seg_map_path'], backend_args=self.backend_args)
+        # # Read the image using OpenCV to handle PNG format
+        # depth_map = mmcv.imfrombytes(img_bytes, flag='unchanged', backend='cv2').astype(np.float32)
+        # mean = np.mean(depth_map)
+        # std_dev = np.std(depth_map)
+        # normalized_depth_map = (depth_map - mean) / std_dev               
         
         # Convert to uint8
         # normalized_depth_map = normalized_depth_map.astype(np.float16)
