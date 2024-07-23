@@ -628,14 +628,14 @@ class LoadDualADAnnotations(MMCV_LoadAnnotations):
 
         # 将相对深度转换为绝对深度
         absolute_depth_map = depth_map / 65535.0 * max_depth
-        mean = np.mean(absolute_depth_map)
-        std_dev = np.std(absolute_depth_map)
-        normalized_depth_map = (absolute_depth_map - mean) / std_dev
+        # mean = np.mean(absolute_depth_map)
+        # std_dev = np.std(absolute_depth_map)
+        # normalized_depth_map = (absolute_depth_map - mean) / std_dev
 
         # 转换为float16以节省内存
-        normalized_depth_map = normalized_depth_map.astype(np.float32)
+        absolute_depth_map = absolute_depth_map.astype(np.float32)
 
-        results['gt_seg_map'] = normalized_depth_map
+        results['gt_seg_map'] = absolute_depth_map
 ################################################################
 
 ##################相对深度做zscore#############################
@@ -651,7 +651,7 @@ class LoadDualADAnnotations(MMCV_LoadAnnotations):
         # Convert to uint8
         # normalized_depth_map = normalized_depth_map.astype(np.float16)
 
-        results['gt_seg_map'] = normalized_depth_map
+        # results['gt_seg_map'] = normalized_depth_map
 
         return results
     
