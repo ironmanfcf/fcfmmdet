@@ -36,13 +36,18 @@ class GFLDeCoDetV16Head(GFLHead):
                      gamma=2.0,
                      alpha=0.25,
                      loss_weight=1.0),
+                 mapping=False,
                  **kwargs) -> None:
         self.seg_out_channels = seg_out_channels
         super().__init__( **kwargs)
         self.loss_seg = MODELS.build(loss_seg)
         
         self.unfold = nn.Unfold(3, 1, (3 - 1) // 2, 1)
+        
+        
+        self.mapping=mapping
         self.absolute = nn.Sigmoid()
+        self.map = nn.ReLU()
         
         # 定义 involution 模块
         # self.inner_involution = involution(channels=self.feat_channels, kernel_size=7, stride=1)
@@ -166,7 +171,10 @@ class GFLDeCoDetV16Head(GFLHead):
             
         # 使用最后一层 seg_feat 进行分割映射
         seg_score = self.conv_seg(seg_feats[-1])
-        seg_score = self.absolute(seg_score)
+        if self.mapping:
+            seg_score = self.map(seg_score)
+        else: 
+            seg_score = self.absolute(seg_score)
         
         # for cls_conv in self.cls_convs:
         #     cls_feat = cls_conv(cls_feat)

@@ -36,7 +36,7 @@ class FCOSDeCoDetHeadV16(FCOSDepthHead):
         
         self.mapping=mapping
         self.absolute = nn.Sigmoid()
-        self.mapping = nn.ReLU()
+        self.map = nn.ReLU()
         
 
     def _init_layers(self) -> None:
@@ -94,7 +94,7 @@ class FCOSDeCoDetHeadV16(FCOSDepthHead):
             bbox_pred = bbox_pred.exp()
 
         if self.mapping:
-            seg_score = self.mapping(seg_score)
+            seg_score = self.map(seg_score)
         else: 
             seg_score = self.absolute(seg_score)
 

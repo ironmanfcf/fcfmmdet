@@ -77,16 +77,17 @@ class SILOGLOSS(nn.Module):
         # Mask out ignored elements
         valid_mask = ((label >= 0) & (label != ignore_index)).float()
         
-        pred_valid = pred * valid_mask
-        label_valid = label * valid_mask
         if self.log:
             # Ensure pred_valid and label_valid are positive before taking log
-            pred_valid = torch.clamp(pred_valid, min=1e-6)
-            label_valid = torch.clamp(label_valid, min=1e-6)
-            pred_valid = torch.log(pred_valid)
-            label_valid = torch.log(label_valid)
+            pred = torch.clamp(pred, min=1e-6)
+            label = torch.clamp(label, min=1e-6)
+            pred = torch.log(pred)
+            label = torch.log(label)
         if self.smooth:
-            label_valid = (1 - self.epsilon) * label_valid + self.epsilon * pred_valid
+            label = (1 - self.epsilon) * label + self.epsilon * pred
+            
+        pred_valid = pred * valid_mask
+        label_valid = label * valid_mask            
 
         diff = (pred_valid - label_valid)
         
