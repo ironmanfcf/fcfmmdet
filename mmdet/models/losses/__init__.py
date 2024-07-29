@@ -27,6 +27,7 @@ from .triplet_loss import TripletLoss
 from .utils import reduce_loss, weight_reduce_loss, weighted_loss
 from .varifocal_loss import VarifocalLoss
 from .logsi_loss import SILOGLOSS
+from .bi_kld_loss import BiKLDLOSS
 
 
 __all__ = [
@@ -43,5 +44,5 @@ __all__ = [
     'MarginL2Loss', 'MultiPosCrossEntropyLoss', 'L2Loss', 'TripletLoss',
     'DDQAuxLoss', 'CrossEntropyCustomLoss', 'FocalCustomLoss' ,
     'lsr', 'symmetric_cross_entropy', 'smooth_symmetric_cross_entropy',
-    'SILOGLOSS'
+    'SILOGLOSS','BiKLDLOSS'
 ]
