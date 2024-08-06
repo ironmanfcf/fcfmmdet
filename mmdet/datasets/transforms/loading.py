@@ -2,6 +2,7 @@
 import os
 from typing import Optional, Tuple, Union
 import warnings
+import mmengine.fileio as fileio
 
 import mmcv
 import numpy as np
@@ -12,7 +13,7 @@ from mmcv.transforms import LoadAnnotations as MMCV_LoadAnnotations
 from mmcv.transforms import LoadImageFromFile
 from mmengine.fileio import get
 from mmengine.structures import BaseDataElement
-import mmengine.fileio as fileio
+
 
 from mmdet.registry import TRANSFORMS
 from mmdet.structures.bbox import get_box_type
