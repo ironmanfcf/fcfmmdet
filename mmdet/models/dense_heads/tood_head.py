@@ -259,6 +259,7 @@ class TOODHead(ATSSHead):
 
             # task decomposition
             avg_feat = F.adaptive_avg_pool2d(feat, (1, 1))
+            #这两个函数是在TaskDecomposition类中定义的，其作用就是对特征做一个变换增强吧，使用的avg_feat是对feat的平均池化
             cls_feat = self.cls_decomp(feat, avg_feat)
             reg_feat = self.reg_decomp(feat, avg_feat)
 
